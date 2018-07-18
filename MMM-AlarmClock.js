@@ -130,6 +130,32 @@ Module.register('MMM-AlarmClock', {
         moment.locale(config.language);
     },
 
+	/**
+	* @function notificationReceived
+	* @description receives notification from other modules
+	* and sets alarm according to payload, or resets the current alarm
+	*
+	* payload.hour = "23"
+	* payload.minute = "58"
+	* payload.days = "1,2,3,4,5"
+	*
+	*/
+	notificationReceived: function(notification, payload, sender) {
+		if(notification === "SET_ALARM"){
+			this.config.alarms[0].hour = payload.hour; 
+			this.config.alarms[0].minute = payload.minute;
+			this.config.alarms[0].days = payload.days;
+		}
+
+	        if (this.alarmFired){
+	            if (notification === "STOP_ALARM"){
+	                this.resetAlarmClock();
+			Log.info('Alarm stopped by notification');
+	            }
+        }
+
+
+
     /**
      * @function checkAlarm
      * @description Checks the alarm event and triggers the alert.
