@@ -152,7 +152,8 @@ Module.register('MMM-AlarmClock', {
 	                this.resetAlarmClock();
 			Log.info('Alarm stopped by notification');
 	            }
-        }
+		}
+        },
 
 
 
