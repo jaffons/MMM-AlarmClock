@@ -337,7 +337,7 @@ Module.register('MMM-AlarmClock', {
 	*/
 	notificationReceived: function(notification, payload, sender) {
 		if(notification === "SET_ALARM"){
-			this.config.alarms[0] = {time: String(payload.hour)+":"+String(payload.minute),
+			this.config.alarms[payload.selectedAlarm] = {time: String(payload.hour)+":"+String(payload.minute),
 									 days: payload.days, 
 									 sound: "alarm.mp3", 
 									 title: "Alarm", 
