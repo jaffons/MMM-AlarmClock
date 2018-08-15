@@ -130,29 +130,6 @@ Module.register('MMM-AlarmClock', {
         moment.locale(config.language);
     },
 
-	/**
-	* @function notificationReceived
-	* @description receives notification from other modules
-	* and sets alarm according to payload, or resets the current alarm
-	*
-	* payload.hour = "23"
-	* payload.minute = "58"
-	* payload.days = "1,2,3,4,5"
-	*
-	*/
-	notificationReceived: function(notification, payload, sender) {
-		if(notification === "SET_ALARM"){
-			this.config.alarms[0].hour = payload.hour; 
-			this.config.alarms[0].minute = payload.minute;
-			this.config.alarms[0].days = payload.days;
-		}
-
-	        if (this.alarmFired){
-	            if (notification === "STOP_ALARM"){
-	                this.resetAlarmClock();
-			Log.info('Alarm stopped by notification');
-	            }
-        }
 
 
 
@@ -335,5 +312,45 @@ Module.register('MMM-AlarmClock', {
         }
 
         return wrapper;
-    }
+    },
+
+
+	/**
+	* @function notificationReceived
+	* @description receives notification from other modules
+	* and sets alarm according to payload, or resets the current alarm
+	* 
+	* notification = "SET_ALARM_HOUR"
+	* payload.alarms = "0" as alarm index, 0,1,2...
+	* payload.hour = "23"
+	* payload.minute = "58"
+	
+	* notification = "SET_ALARM_MINUTE"
+	* payload.alarms = "0" as alarm index, 0,1,2...
+	* payload.hour = "23"
+	* payload.minute = "58"
+	
+	* notification = "SET_ALARM_DAYS"
+	* payload.alarms = "0" as alarm index
+	* payload.days = "1,2,3,4,5"
+	* 
+	*/
+	notificationReceived: function(notification, payload, sender) {
+		if(notification === "SET_ALARM"){
+			this.config.alarms[0] = {time: String(payload.hour)+":"+String(payload.minute),
+									 days: payload.days, 
+									 sound: "alarm.mp3", 
+									 title: "Alarm", 
+									 message: payload.msg};
+			this.setNextAlarm();
+			console.log(this.name + " 'SET_ALARM' notification received");
+		}
+
+		if(notification === "RESET_ALARM"){
+			if (this.alarmFired){
+				this.resetAlarmClock();
+				console.log('Alarm stopped by notification');
+			}
+		}
+	}
 });
